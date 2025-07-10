@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { crearProveedor } from "../services/proveedoreService";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function CrearProveedor() {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -15,6 +16,12 @@ export default function CrearProveedor() {
       alert("Error al crear proveedor");
     }
   };
+
+  useEffect(() => {
+  setTimeout(() => {
+    window.dispatchEvent(new Event("resize"));
+  }, 100);
+}, []);
 
   return (
     <div className="container mt-5">

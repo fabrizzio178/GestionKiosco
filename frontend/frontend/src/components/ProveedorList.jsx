@@ -7,6 +7,7 @@ import {
 
 export default function ProveedorList() {
   const [proveedores, setProveedores] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const cargarProveedores = async () => {
@@ -15,6 +16,8 @@ export default function ProveedorList() {
       setProveedores(data);
     } catch (error) {
       alert("Error al cargar proveedores");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,7 +50,14 @@ export default function ProveedorList() {
         </div>
 
         <div className="card-body">
-          {proveedores.length === 0 ? (
+          {loading ? (
+            <div className="text-center my-4">
+              <div className="spinner-border text-secondary" role="status">
+                <span className="visually-hidden">Cargando...</span>
+              </div>
+              <p className="mt-2 text-muted">Cargando proveedores...</p>
+            </div>
+          ) : proveedores.length === 0 ? (
             <p className="text-muted">No hay proveedores cargados.</p>
           ) : (
             <table className="table table-hover align-middle">
@@ -78,7 +88,9 @@ export default function ProveedorList() {
                       </button>
                       <button
                         className="btn btn-warning btn-sm me-2"
-                        onClick={() => navigate(`/editar-proveedor/${prov.id}`)}
+                        onClick={() =>
+                          navigate(`/editar-proveedor/${prov.id}`)
+                        }
                       >
                         <i className="bi bi-pencil-fill me-1"></i> Editar
                       </button>

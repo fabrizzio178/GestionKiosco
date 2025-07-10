@@ -4,6 +4,7 @@ import ProductosDelProveedor from "./components/ProductosdelProveedor";
 import CrearProveedor from "./components/CrearProveedor";
 import EditarProveedor from "./pages/EditarProveedor";
 import FormularioProducto from "./components/FormularioProducto";
+import EditarProducto from "./pages/EditarProducto";
 export default function App() {
   return (
     <div className="bg-light min-vh-100">
@@ -14,6 +15,7 @@ export default function App() {
         <Route path="crear-proveedor" element={<CrearProveedor/>}/>
         <Route path="editar-proveedor/:proveedorId" element={<EditarProveedor/>}></Route>
         <Route path="/proveedores/:proveedorId/productos/crear" element={<FormularioProducto />} />
+        <Route path="/productos/:id/editar" element={<EditarProducto />} />
       </Routes>
     </div>
   );

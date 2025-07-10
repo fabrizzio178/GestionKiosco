@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   getProductos,
   getProductosYProveedores,
+  eliminarProducto,
 } from "../services/productosService";
 
 export default function ProductosDelProveedor() {
@@ -38,7 +39,7 @@ export default function ProductosDelProveedor() {
       <div className="card shadow">
         <div className="card-header bg-success text-white d-flex justify-content-between align-items-center">
           <h4 className="mb-0">Productos del Proveedor {nombreProveedor}</h4>
-          <button className="btn btn-light btn-sm" onClick={() => navigate(-1)}>
+          <button className="btn btn-light btn-sm" onClick={() => navigate("/")}>
             <i className="bi bi-arrow-left"></i> Volver
           </button>
         </div>
@@ -72,6 +73,25 @@ export default function ProductosDelProveedor() {
                   <tr key={prod.id}>
                     <td>{prod.nombreProducto}</td>
                     <td>${prod.precio}</td>
+                    <td>
+                      <button
+                        className="btn btn-warning btn-sm me-2"
+                        onClick={() => navigate(`/productos/${prod.id}/editar`)}
+                      >
+                        <i className="bi bi-pencil-fill me-1"></i> Editar
+                      </button>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={async () => {
+                          if (confirm("¿Eliminar producto?")) {
+                            await eliminarProducto(prod.id); 
+                            cargarProductos();
+                          }
+                        }}
+                      >
+                        <i className="bi bi-trash-fill me-1"></i> Eliminar
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
