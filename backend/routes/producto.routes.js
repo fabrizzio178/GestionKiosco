@@ -53,4 +53,19 @@ router.delete("/:id", async (req, res) => {
     }
 });
 
+// Filtrados GET
+router.get("/buscar", async(req, res) => {
+    try{
+        const {nombre="", diaReparto=""} = req.query;
+        const productos = await ProductoService.buscarFiltrados(nombre, diaReparto);
+        res.json(productos);
+    } catch (error) {
+        console.error("Error en /productos/buscar:", error);
+        res.status(500).json({ error: error.message });
+    }
+    
+
+
+})
+
 export default router;

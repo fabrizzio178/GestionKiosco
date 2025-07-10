@@ -14,10 +14,18 @@ Producto.init({
     type: DataTypes.STRING,
     allowNull: false,
   },
-  precio: {
+  precioMayor: {
     type: DataTypes.FLOAT,
     allowNull: true,
   },
+  precioMenor: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
+  marca: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  }
 }, {
   sequelize,
   modelName: "Producto",

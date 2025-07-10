@@ -54,3 +54,16 @@ export const eliminarProducto = async(id) => {
         throw error;
     }
 }
+
+export const buscarFiltrados = async(nombre, dia) => {
+    try{
+        const queryParams = new URLSearchParams();
+        if(nombre) queryParams.append("nombre", nombre);
+        if(dia) queryParams.append("dia", dia);
+        const response = await axios.get(`${API_URL}/buscar?${queryParams.toString()}`);
+        return response.data;
+    } catch(error){
+        console.error("Error al buscar productos filtrados:", error);
+        throw error;
+    }
+}

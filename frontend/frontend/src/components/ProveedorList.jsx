@@ -65,6 +65,7 @@ export default function ProveedorList() {
                 <tr>
                   <th>Empresa</th>
                   <th>Teléfono</th>
+                  <th>Dias de Reparto</th>
                   <th style={{ width: "220px" }}>Acciones</th>
                 </tr>
               </thead>
@@ -73,6 +74,7 @@ export default function ProveedorList() {
                   <tr key={prov.id}>
                     <td>{prov.nombreEmpresa}</td>
                     <td>{prov.telefono}</td>
+                    <td>{prov.diasReparto}</td>
                     <td>
                       <button
                         className="btn btn-primary btn-sm me-2"

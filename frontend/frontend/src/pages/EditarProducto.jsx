@@ -10,7 +10,9 @@ export default function EditarProducto() {
   const navigate = useNavigate();
   const [producto, setProducto] = useState(null);
   const [nombreProducto, setNombreProducto] = useState("");
-  const [precio, setPrecio] = useState("");
+  const [precioMenor, setPrecioMenor] = useState("");
+  const [precioMayor, setPrecioMayor] = useState("");
+  const [marca, setMarca] = useState("");
 
   useEffect(() => {
     const fetchProducto = async () => {
@@ -19,7 +21,9 @@ export default function EditarProducto() {
       if (encontrado) {
         setProducto(encontrado);
         setNombreProducto(encontrado.nombreProducto);
-        setPrecio(encontrado.precio);
+        setPrecioMenor(encontrado.precioMenor);
+        setPrecioMayor(encontrado.precioMayor);
+        setMarca(encontrado.marca);
       }
     };
     fetchProducto();
@@ -30,7 +34,9 @@ export default function EditarProducto() {
     try {
       await actualizarProducto(id, {
         nombreProducto,
-        precio,
+        precioMenor,
+        precioMayor,
+        marca,
         proveedorId: producto.proveedorId,
       });
       alert("Producto actualizado correctamente");
@@ -70,13 +76,34 @@ export default function EditarProducto() {
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Precio</label>
+              <label className="form-label">Precio por Menor</label>
               <input
                 type="number"
                 step="0.01"
                 className="form-control"
-                value={precio}
-                onChange={(e) => setPrecio(e.target.value)}
+                value={precioMenor}
+                onChange={(e) => setPrecioMenor(e.target.value)}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Precio por Mayor</label>
+              <input
+                type="number"
+                step="0.01"
+                className="form-control"
+                value={precioMayor}
+                onChange={(e) => setPrecioMayor(e.target.value)}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Marca</label>
+              <input
+                type="text"
+                className="form-control"
+                value={marca}
+                onChange={(e) => setMarca(e.target.value)}
               />
             </div>
 

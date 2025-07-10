@@ -14,6 +14,8 @@ export default function EditarProveedor() {
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm();
 
@@ -46,6 +48,31 @@ export default function EditarProveedor() {
     }
   };
 
+  // Lógica para los dias de reparto
+  const diasDeLaSemana = [
+    "Lunes",
+    "Martes",
+    "Miércoles",
+    "Jueves",
+    "Viernes",
+    "Sábado",
+    "Domingo",
+  ];
+
+  // Miramos el estado actual de 'diasReparto' como array (viene como string separado por comas)
+  const diasSeleccionados = watch("diasReparto")?.split(",") || [];
+
+  const toggleDia = (dia) => {
+    const actual = new Set(diasSeleccionados); // Usamos set para evitar duplicados
+    // Si el dia ya está seleccionado, lo quitamos; si no, lo agregamos
+    if (actual.has(dia)) {
+      actual.delete(dia);
+    } else {
+      actual.add(dia);
+    }
+    setValue("diasReparto", Array.from(actual).join(",")); // Actualizamos el valor del campo
+  };
+
   return (
     <div className="container mt-5">
       <div className="card shadow">
@@ -61,11 +88,17 @@ export default function EditarProveedor() {
               <label className="form-label">Nombre de Empresa</label>
               <input
                 type="text"
-                className={`form-control ${errors.nombreEmpresa ? "is-invalid" : ""}`}
-                {...register("nombreEmpresa", { required: "Campo obligatorio" })}
+                className={`form-control ${
+                  errors.nombreEmpresa ? "is-invalid" : ""
+                }`}
+                {...register("nombreEmpresa", {
+                  required: "Campo obligatorio",
+                })}
               />
               {errors.nombreEmpresa && (
-                <div className="invalid-feedback">{errors.nombreEmpresa.message}</div>
+                <div className="invalid-feedback">
+                  {errors.nombreEmpresa.message}
+                </div>
               )}
             </div>
 
@@ -76,6 +109,26 @@ export default function EditarProveedor() {
                 className="form-control"
                 {...register("telefono")}
               />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Días de reparto</label>
+              <div className="d-flex flex-wrap gap-2">
+                {diasDeLaSemana.map((dia) => (
+                  <div className="form-check" key={dia}>
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id={`dia-${dia}`}
+                      checked={diasSeleccionados.includes(dia)}
+                      onChange={() => toggleDia(dia)}
+                    />
+                    <label className="form-check-label" htmlFor={`dia-${dia}`}>
+                      {dia}
+                    </label>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <button type="submit" className="btn btn-warning">

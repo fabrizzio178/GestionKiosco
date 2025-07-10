@@ -64,7 +64,9 @@ export default function ProductosDelProveedor() {
               <thead className="table-success">
                 <tr>
                   <th>Nombre del Producto</th>
-                  <th>Precio ($)</th>
+                  <th>Precio por Unidad($)</th>
+                  <th>Precio por Mayor($)</th>
+                  <th>Marca</th>
                   <th style={{ width: "160px" }}>Acciones</th>
                 </tr>
               </thead>
@@ -72,7 +74,9 @@ export default function ProductosDelProveedor() {
                 {productos.map((prod) => (
                   <tr key={prod.id}>
                     <td>{prod.nombreProducto}</td>
-                    <td>${prod.precio}</td>
+                    <td>${prod.precioMenor}</td>
+                    <td>${prod.precioMayor}</td>
+                    <td>{prod.marca.toUpperCase()}</td>
                     <td>
                       <button
                         className="btn btn-warning btn-sm me-2"

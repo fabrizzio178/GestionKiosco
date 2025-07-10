@@ -17,6 +17,10 @@ Proveedor.init({
     type: DataTypes.STRING,
     allowNull: true,
   },
+  diasReparto:{
+    type: DataTypes.STRING,
+    allowNull: true,
+  }
 }, {
   sequelize,
   modelName: "Proveedor",

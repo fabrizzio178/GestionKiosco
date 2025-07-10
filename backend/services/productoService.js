@@ -29,6 +29,10 @@ class ProductoService {
     async eliminarProducto(id) {
         return ProductoRepository.eliminar(id);
     }
+
+    async buscarFiltrados(nombre = "", diaReparto = "") {
+        return ProductoRepository.buscarFiltrados(nombre, diaReparto);
+    }
 }
 
 export default new ProductoService();
