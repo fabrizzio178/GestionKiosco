@@ -73,28 +73,33 @@ export default function ProveedorList() {
                 {proveedores.map((prov) => (
                   <tr key={prov.id}>
                     <td>{prov.nombreEmpresa}</td>
-                    <td>{prov.telefono}</td>
+                    <td
+                      className={prov.telefono ? "" : "text-muted fst-italic"}
+                    >
+                      {prov.telefono || "Teléfono Desconocido"}
+                    </td>
+
                     <td>{prov.diasReparto}</td>
                     <td>
                       <button
-                        className="btn btn-primary btn-sm me-2"
+                        className="btn btn-primary btn-sm mx-1"
                         onClick={() => verProductos(prov.id)}
                       >
                         <i className="bi bi-box-seam me-1"></i> Ver productos
                       </button>
+
                       <button
-                        className="btn btn-danger btn-sm"
+                        className="btn btn-warning btn-sm mx-1"
+                        onClick={() => navigate(`/editar-proveedor/${prov.id}`)}
+                      >
+                        <i className="bi bi-pencil-fill me-1"></i> Editar
+                      </button>
+
+                      <button
+                        className="btn btn-danger btn-sm mx-1"
                         onClick={() => handleEliminar(prov.id)}
                       >
                         <i className="bi bi-trash-fill me-1"></i> Eliminar
-                      </button>
-                      <button
-                        className="btn btn-warning btn-sm me-2"
-                        onClick={() =>
-                          navigate(`/editar-proveedor/${prov.id}`)
-                        }
-                      >
-                        <i className="bi bi-pencil-fill me-1"></i> Editar
                       </button>
                     </td>
                   </tr>

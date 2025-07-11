@@ -83,13 +83,8 @@ export default function CrearProveedor() {
                 className={`form-control ${
                   errors.telefono ? "is-invalid" : ""
                 }`}
-                {...register("telefono", { required: true })}
+                {...register("telefono", { required: false })}
               />
-              {errors.telefono && (
-                <div className="invalid-feedback">
-                  Este campo es obligatorio
-                </div>
-              )}
             </div>
 
             <div className="mb-3">

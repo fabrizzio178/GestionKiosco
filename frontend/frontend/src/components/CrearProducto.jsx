@@ -6,15 +6,22 @@ import { useEffect } from "react";
 export default function FormularioProducto() {
   const { proveedorId } = useParams();
   const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
 
   const onSubmit = async (data) => {
     try {
-      await crearProducto({ ...data, proveedorId: parseInt(proveedorId) });
+      await crearProducto({
+        ...data,
+        proveedorId: parseInt(proveedorId),
+        precioMenor: parseFloat(data.precioMenor),
+        precioMayor: parseFloat(data.precioMayor),
+      });
       alert("Producto creado correctamente");
       navigate(`/proveedores/${proveedorId}/productos`);
     } catch (err) {
@@ -22,35 +29,34 @@ export default function FormularioProducto() {
     }
   };
 
+  // Evita que los inputs se "cuelguen" en algunos navegadores al usar animaciones o efectos
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       window.dispatchEvent(new Event("resize"));
     }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
     <div className="container mt-5">
       <div className="card shadow">
-        <div className="card-header bg-primary text-white d-flex justify-content-between">
+        <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
           <h5 className="mb-0">Agregar Producto</h5>
           <button className="btn btn-light btn-sm" onClick={() => navigate(-1)}>
             <i className="bi bi-arrow-left"></i> Volver
           </button>
         </div>
+
         <div className="card-body">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-3">
               <label className="form-label">Nombre del Producto</label>
               <input
-                className={`form-control ${
-                  errors.nombreProducto && "is-invalid"
-                }`}
-                {...register("nombreProducto", { required: true })}
+                className={`form-control ${errors.nombreProducto ? "is-invalid" : ""}`}
+                {...register("nombreProducto", { required: "Este campo es obligatorio" })}
               />
               {errors.nombreProducto && (
-                <div className="invalid-feedback">
-                  Este campo es obligatorio
-                </div>
+                <div className="invalid-feedback">{errors.nombreProducto.message}</div>
               )}
             </div>
 
@@ -59,9 +65,15 @@ export default function FormularioProducto() {
               <input
                 type="number"
                 step="0.01"
-                className="form-control"
-                {...register("precioMenor")}
+                className={`form-control ${errors.precioMenor ? "is-invalid" : ""}`}
+                {...register("precioMenor", {
+                  required: "Ingrese un precio",
+                  min: { value: 0, message: "Debe ser positivo" },
+                })}
               />
+              {errors.precioMenor && (
+                <div className="invalid-feedback">{errors.precioMenor.message}</div>
+              )}
             </div>
 
             <div className="mb-3">
@@ -69,9 +81,15 @@ export default function FormularioProducto() {
               <input
                 type="number"
                 step="0.01"
-                className="form-control"
-                {...register("precioMayor")}
+                className={`form-control ${errors.precioMayor ? "is-invalid" : ""}`}
+                {...register("precioMayor", {
+                  required: "Ingrese un precio",
+                  min: { value: 0, message: "Debe ser positivo" },
+                })}
               />
+              {errors.precioMayor && (
+                <div className="invalid-feedback">{errors.precioMayor.message}</div>
+              )}
             </div>
 
             <div className="mb-3">
