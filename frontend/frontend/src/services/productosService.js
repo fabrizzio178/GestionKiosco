@@ -67,3 +67,19 @@ export const buscarFiltrados = async(nombre, dia) => {
         throw error;
     }
 }
+
+export const importarCSV = async(formData) => {
+    try{
+        const response = await axios.post(`${API_URL}/importar-csv`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+        return response.data;
+    } catch(error){
+        console.error("Error al importar CSV:", error);
+        throw error;
+    }
+
+
+}

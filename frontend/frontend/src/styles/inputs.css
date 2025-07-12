@@ -1,0 +1,27 @@
+.mi-input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  width: 100%;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: #fff;
+}
+
+.mi-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+.mi-invalid {
+  border-color: #dc3545;
+  background-color: #fff0f0;
+}
+
+.mi-feedback {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
