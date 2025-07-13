@@ -36,12 +36,11 @@ class ProductoService {
     return ProductoRepository.buscarFiltrados(nombre, diaReparto);
   }
 
-  async importarCSV(productos) {
+  async importarCSV(productos, proveedorId) {
     const resultados = [];
 
     for (const prod of productos) {
       try {
-        const proveedorId = parseInt(prod.proveedorId);
         const proveedor = await ProveedorRepository.obtenerPorId(proveedorId);
         if (!proveedor) {
           resultados.push({

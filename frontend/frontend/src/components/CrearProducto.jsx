@@ -37,12 +37,10 @@ export default function FormularioProducto() {
     formData.append("archivo", archivo);
 
     try {
-      const response = await importarCSV(formData);
+      const response = await importarCSV(formData, proveedorId);
       alert("Importación exitosa");
       document.getElementById("fileInput").value = null;
-
-      // Si estás en una pantalla donde se muestra la tabla, recargala acá
-      // cargarProductosDelProveedor();
+      navigate(`/proveedores/${proveedorId}/productos`);
     } catch (error) {
       console.error("Error al importar CSV:", error);
       alert("Error al importar el archivo CSV");

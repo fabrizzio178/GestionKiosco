@@ -68,9 +68,9 @@ export const buscarFiltrados = async(nombre, dia) => {
     }
 }
 
-export const importarCSV = async(formData) => {
+export const importarCSV = async(formData, proveedorId) => {
     try{
-        const response = await axios.post(`${API_URL}/importar-csv`, formData, {
+        const response = await axios.post(`${API_URL}/importar-csv?proveedorId=${proveedorId}`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
@@ -80,6 +80,4 @@ export const importarCSV = async(formData) => {
         console.error("Error al importar CSV:", error);
         throw error;
     }
-
-
 }

@@ -3,6 +3,7 @@ import ProductoService from "../services/productoService.js";
 import multer from "multer";
 import csv from "csv-parser";
 import fs from "fs";
+import { createWorker } from "tesseract.js";
 
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
@@ -74,6 +75,10 @@ router.get("/buscar", async (req, res) => {
 // Importar CSV
 router.post("/importar-csv", upload.single("archivo"), async (req, res) => {
   try {
+    const proveedorId = parseInt(req.query.proveedorId);
+    if (!proveedorId) {
+      return res.status(400).json({ error: "Proveedor ID es requerido" });
+    }
     const productos = [];
     fs.createReadStream(req.file.path)
       .pipe(csv())
@@ -82,7 +87,10 @@ router.post("/importar-csv", upload.single("archivo"), async (req, res) => {
       })
       .on("end", async () => {
         try {
-          const resultados = await ProductoService.importarCSV(productos);
+          const resultados = await ProductoService.importarCSV(
+            productos,
+            proveedorId
+          );
           fs.unlinkSync(req.file?.path);
           res.status(201).json({ mensaje: "Productos importados", resultados });
         } catch (error) {
@@ -92,6 +100,45 @@ router.post("/importar-csv", upload.single("archivo"), async (req, res) => {
       });
   } catch (error) {
     console.error("Error en /productos/importar-csv:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post("/importar-imagen", upload.single("archivo"), async (req, res) => {
+  const proveedorId = parseInt(req.query.proveedorId);
+  if (!proveedorId) {
+    return res.status(400).json({ error: "Proveedor ID es requerido" });
+  }
+
+  const filePath = req.file?.path;
+  if (!filePath) {
+    return res.status(400).json({ error: "Archivo no encontrado" });
+  }
+  try {
+    const worker = await createWorker("eng"); 
+    const {
+      data: { text },
+    } = await worker.recognize(filePath);
+    await worker.terminate();
+    if (!text) {
+      return res.status(400).json({ error: "No se pudo extraer texto de la imagen" });
+    }
+    const productos = text.split("\n").map((linea) => {
+      const [nombreProducto, marca, precioMayor, precioMenor] =
+        linea.split(",");
+      return { nombreProducto, marca, precioMayor, precioMenor };
+    });
+
+    const resultados = await ProductoService.importarCSV(
+      productos,
+      proveedorId
+    );
+    fs.unlinkSync(filePath);
+    res
+      .status(201)
+      .json({ mensaje: "Imagen procesada e importada", resultados });
+  } catch (error) {
+    console.error("Error al procesar imagen:", error);
     res.status(500).json({ error: error.message });
   }
 });
