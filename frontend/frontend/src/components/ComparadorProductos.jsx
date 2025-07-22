@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { buscarFiltrados } from "../services/productosService";
 import { useNavigate } from "react-router-dom";
 
@@ -23,6 +23,8 @@ export default function ComparadorProductos() {
   const [productoMasBarato, setProductoMasBarato] = useState(null);
   const [productoMasBaratoMenor, setProductoMasBaratoMenor] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const resultadosPorPagina = 15;
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -38,20 +40,17 @@ export default function ComparadorProductos() {
       setLoading(true);
       const data = await buscarFiltrados(form.nombre, form.dia);
 
-      // Ordenar si se seleccionó
       if (form.orden === "asc") {
         data.sort((a, b) => a.precioMayor - b.precioMayor);
       } else if (form.orden === "desc") {
         data.sort((a, b) => b.precioMayor - a.precioMayor);
       }
 
-      // Calcular menor precio por mayor
       const menorPrecioMayor = Math.min(...data.map((p) => p.precioMayor));
       const productoBaratoMayor = data.find(
         (p) => p.precioMayor === menorPrecioMayor
       );
 
-      // Calcular menor precio por menor
       const menorPrecioMenor = Math.min(...data.map((p) => p.precioMenor));
       const productoBaratoMenor = data.find(
         (p) => p.precioMenor === menorPrecioMenor
@@ -60,6 +59,7 @@ export default function ComparadorProductos() {
       setResultados(data);
       setProductoMasBarato(productoBaratoMayor || null);
       setProductoMasBaratoMenor(productoBaratoMenor || null);
+      setPaginaActual(1);
     } catch {
       alert("Error al buscar productos");
     } finally {
@@ -67,12 +67,40 @@ export default function ComparadorProductos() {
     }
   };
 
-  const limpiarResultados = () => {
-    setResultados([]);
+  const limpiarResultados = async () => {
     setForm({ nombre: "", dia: "", orden: "" });
-    setProductoMasBarato(null);
-    setProductoMasBaratoMenor(null);
+    await cargarResultadosIniciales();
   };
+
+  const cargarResultadosIniciales = async () => {
+    setLoading(true);
+    try {
+      const data = await buscarFiltrados("", "");
+      setResultados(data);
+      setPaginaActual(1);
+    } catch {
+      alert("Error al cargar productos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const indiceUltimo = paginaActual * resultadosPorPagina;
+  const indicePrimero = indiceUltimo - resultadosPorPagina;
+  const resultadosAMostrar = resultados.slice(indicePrimero, indiceUltimo);
+  const totalPaginas = Math.ceil(resultados.length / resultadosPorPagina);
+
+  const cambiarPagina = (numero) => setPaginaActual(numero);
+  const siguiente = () => {
+    if (paginaActual < totalPaginas) setPaginaActual(paginaActual + 1);
+  };
+  const anterior = () => {
+    if (paginaActual > 1) setPaginaActual(paginaActual - 1);
+  };
+
+  useEffect(() => {
+    cargarResultadosIniciales();
+  }, []);
 
   return (
     <div className="container mt-5">
@@ -147,16 +175,14 @@ export default function ComparadorProductos() {
           {productoMasBarato && (
             <div className="alert alert-success">
               <strong>¡Mejor precio por mayor!</strong>{" "}
-              {productoMasBarato.nombreProducto} a $
-              {productoMasBarato.precioMayor} por{" "}
+              {productoMasBarato.nombreProducto} a ${productoMasBarato.precioMayor} por{" "}
               {productoMasBarato.proveedor?.nombreEmpresa}
             </div>
           )}
           {productoMasBaratoMenor && (
             <div className="alert alert-info">
               <strong>¡Mejor precio por menor!</strong>{" "}
-              {productoMasBaratoMenor.nombreProducto} a $
-              {productoMasBaratoMenor.precioMenor} por{" "}
+              {productoMasBaratoMenor.nombreProducto} a ${productoMasBaratoMenor.precioMenor} por{" "}
               {productoMasBaratoMenor.proveedor?.nombreEmpresa}
             </div>
           )}
@@ -165,7 +191,7 @@ export default function ComparadorProductos() {
             <thead>
               <tr>
                 <th>Producto</th>
-                <th>Marca</th>
+                <th>Cantidad</th>
                 <th>Precio Mayor</th>
                 <th>Precio Menor</th>
                 <th>Proveedor</th>
@@ -173,10 +199,10 @@ export default function ComparadorProductos() {
               </tr>
             </thead>
             <tbody>
-              {resultados.map((prod) => (
+              {resultadosAMostrar.map((prod) => (
                 <tr key={prod.id}>
                   <td>{prod.nombreProducto}</td>
-                  <td>{prod.marca}</td>
+                  <td>{prod.cantidad}</td>
                   <td>${prod.precioMayor}</td>
                   <td>${prod.precioMenor}</td>
                   <td>{prod.proveedor?.nombreEmpresa}</td>
@@ -185,6 +211,37 @@ export default function ComparadorProductos() {
               ))}
             </tbody>
           </table>
+
+          {totalPaginas > 1 && (
+            <nav className="mt-3">
+              <ul className="pagination justify-content-center">
+                <li className={`page-item ${paginaActual === 1 ? "disabled" : ""}`}>
+                  <button className="page-link" onClick={anterior}>
+                    &laquo; Anterior
+                  </button>
+                </li>
+                {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((num) => (
+                  <li
+                    key={num}
+                    className={`page-item ${num === paginaActual ? "active" : ""}`}
+                  >
+                    <button className="page-link" onClick={() => cambiarPagina(num)}>
+                      {num}
+                    </button>
+                  </li>
+                ))}
+                <li
+                  className={`page-item ${
+                    paginaActual === totalPaginas ? "disabled" : ""
+                  }`}
+                >
+                  <button className="page-link" onClick={siguiente}>
+                    Siguiente &raquo;
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          )}
         </>
       )}
     </div>

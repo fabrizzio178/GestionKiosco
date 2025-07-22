@@ -55,6 +55,17 @@ export const eliminarProducto = async(id) => {
     }
 }
 
+export const eliminarTodos = async(id) => {
+    try{
+        const response = await axios.delete(`${API_URL}/proveedor/${id}`);
+        return response.data;
+    } catch(error){
+        console.error("Error al eliminar todos los productos del proveedor:", error);
+        throw error;
+    }
+
+}
+
 export const buscarFiltrados = async(nombre, dia) => {
     try{
         const queryParams = new URLSearchParams();
@@ -67,6 +78,7 @@ export const buscarFiltrados = async(nombre, dia) => {
         throw error;
     }
 }
+
 
 export const importarCSV = async(formData, proveedorId) => {
     try{

@@ -1,11 +1,13 @@
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { crearProducto, importarCSV } from "../services/productosService";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export default function FormularioProducto() {
   const { proveedorId } = useParams();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const {
     register,
@@ -36,24 +38,47 @@ export default function FormularioProducto() {
     const formData = new FormData();
     formData.append("archivo", archivo);
 
+    setLoading(true);
+
     try {
       const response = await importarCSV(formData, proveedorId);
       alert("Importación exitosa");
-      document.getElementById("fileInput").value = null;
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = null;
+      }
+
       navigate(`/proveedores/${proveedorId}/productos`);
     } catch (error) {
       console.error("Error al importar CSV:", error);
       alert("Error al importar el archivo CSV");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Evita que los inputs se "cuelguen" en algunos navegadores al usar animaciones o efectos
+  // Evita que los inputs se "cuelguen" en algunos navegadores 
   useEffect(() => {
     const timer = setTimeout(() => {
       window.dispatchEvent(new Event("resize"));
     }, 100);
     return () => clearTimeout(timer);
   }, []);
+
+  if (loading) {
+    return (
+      <div className="container mt-5 text-center">
+        <div
+          className="spinner-border text-primary"
+          role="status"
+          style={{ width: "4rem", height: "4rem" }}
+        >
+          <span className="visually-hidden">Cargando...</span>
+        </div>
+        <p className="mt-3">Importando productos desde CSV...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mt-5">
