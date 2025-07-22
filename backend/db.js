@@ -1,12 +1,14 @@
-import path from "path";
 import { Sequelize } from "sequelize";
 
-const __dirname = path.resolve();
 
-const sequelize = new Sequelize({
-    dialect: "sqlite",
-    storage: path.join(__dirname, "data", "database.sqlite"),
-    logging: false,
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: "postgres",
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false // Cambia esto si tienes problemas con certificados SSL
+        }
+    },
 });
 
 
