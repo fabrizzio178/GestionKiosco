@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors(
     {
-        origin: "http://localhost:5173", // Cambia esto según tu frontend
+        origin: "https://gestionpachi.vercel.app", // Cambia segun frontend
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true
     }

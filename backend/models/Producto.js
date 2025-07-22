@@ -25,7 +25,11 @@ Producto.init({
   marca: {
     type: DataTypes.STRING,
     allowNull: true,
-  }
+  },
+  cantidad: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
 }, {
   sequelize,
   modelName: "Producto",

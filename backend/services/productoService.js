@@ -32,6 +32,10 @@ class ProductoService {
     return ProductoRepository.eliminar(id);
   }
 
+  async eliminarTodos(proveedorId) {
+    return ProductoRepository.eliminarTodos(proveedorId);
+  }
+
   async buscarFiltrados(nombre = "", diaReparto = "") {
     return ProductoRepository.buscarFiltrados(nombre, diaReparto);
   }
@@ -55,6 +59,7 @@ class ProductoService {
           marca: prod.marca,
           precioMayor: parseFloat(prod.precioMayor),
           precioMenor: parseFloat(prod.precioMenor),
+          cantidad: parseInt(prod.cantidad) || 1, // Asignar cantidad por defecto si no se proporciona
           proveedorId: proveedorId,
         };
 

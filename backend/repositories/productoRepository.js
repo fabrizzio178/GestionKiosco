@@ -14,7 +14,8 @@ class ProductoRepository extends RepositorioBase {
                 model: Proveedor,
                 as: "proveedor",
                 attributes: ["nombreEmpresa"] // Selecciona los campos que necesitas del proveedor
-            }
+            },
+            order: [["nombreProducto", "ASC"]] // Ordena por nombre de producto
         })
     }
 
@@ -34,6 +35,12 @@ class ProductoRepository extends RepositorioBase {
 
 
         })
+    }
+
+    async eliminarTodos(proveedorId){
+        return this.model.destroy({
+            where: { proveedorId },
+        });
     }
 
 }
